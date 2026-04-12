@@ -1,0 +1,14 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude: [ build/**, lib/**.freezed.dart, lib/**.g.dart ]
+  errors:
+    mixin_inherits_from_not_object: ignore
+
+linter:
+  rules:
+    directives_ordering: true
+    prefer_relative_imports: true
+    public_member_api_docs: false
+    avoid_catches_without_on_clauses: false
+    avoid_classes_with_only_static_members: false

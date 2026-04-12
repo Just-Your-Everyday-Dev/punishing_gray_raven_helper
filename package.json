@@ -1,0 +1,13 @@
+{
+  "name": "pgr-helper",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/backend",
+    "scraper"
+  ],
+  "scripts": {
+    "backend": "npm run dev --workspace=apps/backend",
+    "scrapper": "npm run start --workspace=scraper"
+  }
+}

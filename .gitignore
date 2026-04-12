@@ -1,0 +1,50 @@
+# ===========================
+# General
+# ===========================
+.DS_Store
+*.log
+*.swp
+.history
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+#.vscode/
+
+# ===========================
+# Flutter (apps/frontend)
+# ===========================
+**/doc/api/
+**/ios/Flutter/.last_build_id
+apps/frontend/.dart_tool/
+apps/frontend/.flutter-plugins-dependencies
+apps/frontend/.pub-cache/
+apps/frontend/.pub/
+apps/frontend/build/
+apps/frontend/coverage/
+apps/frontend/app.*.symbols
+apps/frontend/app.*.map.json
+apps/frontend/android/app/debug
+apps/frontend/android/app/profile
+apps/frontend/android/app/release
+
+# ===========================
+# Node.js (apps/backend + scraper)
+# ===========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===========================
+# Environment variables
+# ===========================
+.env
+.env.local
+.env.production
+scraper/.env
+apps/backend/.env
+
+dist/

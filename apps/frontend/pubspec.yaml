@@ -1,0 +1,54 @@
+name: punishing_gray_raven_helper
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+flutter_gen:
+  output: lib/src/gen
+
+dependencies:
+  auto_size_text: ^3.0.0
+  bloc: ^9.0.0
+  build_runner: ^2.9.0
+  cached_network_image: ^3.3.1
+  cupertino_icons: ^1.0.8
+  dio: ^5.8.0+1
+  flutter_bloc: ^9.1.1
+  flutter_easyloading: ^3.0.5
+  flutter_gen_runner: ^5.3.1
+  flutter_html: ^3.0.0
+  flutter_svg: ^2.0.10+1
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+  intl: ^0.20.2
+  json_annotation: ^4.9.0
+  json_serializable: ^6.11.1
+  pretty_dio_logger: ^1.4.0
+  retrofit: ^4.7.3
+  retrofit_generator: ^10.0.6
+  skeletonizer: ^2.1.0+1
+  url_launcher: ^6.3.2
+  shared_preferences: ^2.5.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/icons/
+    - assets/images/
