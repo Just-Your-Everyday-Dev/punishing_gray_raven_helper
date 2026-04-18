@@ -7,6 +7,7 @@
     "dev": "ts-node src/index.ts",
     "build": "tsc",
     "start": "ts-node src/memories.ts",
+    "scrape:characters": "ts-node src/characters.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

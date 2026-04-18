@@ -4,7 +4,8 @@ import ImageKit from 'imagekit';
 import mongoose, {Schema, Document} from 'mongoose';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import {IMemory} from './models/mongoose_model';
+import {IMemory} from '../../shared/models/memories_model';
+import  {connectToDb} from '../../shared/db_connection'
 
 dotenv.config({path: path.resolve(__dirname, '../.env')})
 
@@ -16,10 +17,7 @@ const imagekit = new ImageKit({
 
 // mongoDB connection
 
-const connectDB = async (): Promise<void> => {
-    await mongoose.connect(process.env.MONGO_URI!)
-    console.log("MongoDB connected");
-};
+
 
 const MemorySchema = new Schema<IMemory>({
     name: {type: String, required: true, unique: true},
