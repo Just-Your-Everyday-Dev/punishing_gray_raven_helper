@@ -2,10 +2,10 @@
 
 ## What This App Does
 
-A companion app for **Punishing: Gray Raven (PGR)**, a 3D action RPG by Kuro Game.
+A companion app for **Punishing: Gray Raven (PGR)**, a 3D action RPG by Kuro Games.
 The app gives players a reference tool to look up game data without visiting the wiki.
 
-**Target platforms:** Flutter Web + Mobile (iOS & Android)
+**Target platforms:** Web (React) + Mobile (Flutter)
 
 ---
 
@@ -30,11 +30,12 @@ The app gives players a reference tool to look up game data without visiting the
 
 | Layer | Technology | Hosting | Status |
 |---|---|---|---|
-| Frontend | Flutter (Web + Mobile) | Firebase Hosting (TBD) | Scaffolded |
-| Backend | Node.js + Express + TypeScript | Render (free tier) | Not started |
+| Web Frontend | React | TBD | Planned |
+| Mobile Frontend | Flutter | TBD | Planned |
+| Backend | Node.js + Express + TypeScript | Render (free tier) | In Progress |
 | Database | MongoDB Atlas (M0 free) | Atlas cloud | Connected, data seeded |
 | Image storage | ImageKit | imagekit.io (free) | Working |
-| Scraper | TypeScript (ts-node) | Runs locally | Memories done |
+| Scraper | TypeScript (ts-node) | Runs locally | Memories + Characters done |
 
 ---
 
@@ -43,23 +44,31 @@ The app gives players a reference tool to look up game data without visiting the
 ```
 punishing_gray_raven_helper/
 ├── apps/
-│   ├── backend/          # Express API (TypeScript)
+│   ├── backend/                    # Express API (TypeScript)
 │   │   ├── src/
-│   │   │   └── index.ts  # (not yet created)
+│   │   │   ├── index.ts            # Entry point — Express app, DB connect, listen
+│   │   │   ├── routes/
+│   │   │   │   └── characters_route.ts    # (stub — in progress)
+│   │   │   └── controllers/
+│   │   │       └── characters_controller.ts  # (stub — in progress)
 │   │   ├── package.json
-│   │   ├── tsconfig.json
-│   │   └── .env          # MONGO_URI
-│   └── frontend/         # Flutter app
-│       └── lib/
-├── scraper/              # One-off data scraping scripts (TypeScript)
+│   │   └── tsconfig.json
+│   └── frontend/
+│       ├── web/                    # React app (planned)
+│       └── mobile/                 # Flutter app (planned)
+├── scraper/                        # One-off data scraping scripts
 │   ├── src/
-│   │   ├── memories.ts   # DONE
+│   │   ├── memories.ts             # DONE
+│   │   ├── characters.ts           # DONE
 │   │   └── models/
-│   │       └── mongoose_model.ts
+│   │       └── character_model.ts  # local interface (being migrated to shared)
 │   ├── package.json
-│   ├── tsconfig.json
-│   └── .env              # MONGO_URI + ImageKit keys
-├── package.json          # Root — npm workspaces
+│   └── tsconfig.json
+├── shared/                         # Shared across scraper and backend
+│   ├── db_connection.ts            # MongoDB connect function
+│   └── models/
+│       └── character_model.ts      # ICharacter interface
+├── package.json                    # Root — npm workspaces
 └── PROJECT.md
 ```
 
@@ -67,14 +76,13 @@ punishing_gray_raven_helper/
 
 ## Infrastructure Setup
 
-- [x] Flutter project scaffolded
 - [x] MongoDB Atlas cluster created (M0 free tier, IP whitelist `0.0.0.0/0`)
-- [x] ImageKit account created
+- [x] ImageKit account created and integrated
 - [x] `.env` files configured in `scraper/` and `apps/backend/`
-- [x] npm workspaces configured (backend + scraper only, Flutter excluded)
-- [x] TypeScript + ts-node configured in both backend and scraper
+- [x] npm workspaces configured (root `package.json`)
+- [x] TypeScript + ts-node configured in backend and scraper
 - [ ] Render account + backend deployed
-- [ ] Firebase project linked for Flutter web deploy
+- [ ] Frontend hosting set up
 
 ---
 
@@ -83,111 +91,62 @@ punishing_gray_raven_helper/
 Source: `grayravens.com` (GRAY RAVENS wiki)
 
 ### Memories (`scraper/src/memories.ts`) — COMPLETE
-- [x] Scrape list page → 63 memories found across star ratings (6★ to 2★)
-- [x] Visit each memory page → extract stats (HP, Crit, ATK, DEF) and set bonuses (2-piece, 4-piece)
-- [x] Scrape icon images (`*Icon*`) and portrait images (`*Portrait*`) per memory
-- [x] Upload all images to ImageKit under `/pgr/memories/busts`, `/pgr/memories/icons`, `/pgr/memories/portraits`
-- [x] Save data + ImageKit URLs to MongoDB Atlas (`memories` collection)
-- [x] Upsert logic — safe to re-run without duplicating data
+- [x] Scrape list page → 63 memories across star ratings (6★ to 2★)
+- [x] Extract stats (HP, Crit, ATK, DEF) and set bonuses (2-piece, 4-piece)
+- [x] Upload images to ImageKit under `/pgr/memories/`
+- [x] Upsert into MongoDB (`memories` collection)
 
-### Memories — Mongoose Model
-```typescript
-IMemory {
-    name: string           // e.g. "Condelina"
-    stars: number          // 2–6
-    stats: {
-        hp: number
-        crit: number
-        atk: number
-        def: number
-    }
-    setPiece2: string      // 2-piece set bonus description
-    setPiece4: string      // 4-piece set bonus description
-    bustImageUrl: string   // ImageKit URL
-    iconImageUrls: string[] // ImageKit URLs (up to 3)
-    portraitImageUrls: string[] // ImageKit URLs (up to 3)
-    wikiUrl: string
-}
-```
+### Characters (`scraper/src/characters.ts`) — COMPLETE
+- [x] Scrape list page → all playable characters (stops before Upcoming section)
+- [x] Extract stats, bio, element, rank, class, weapon type, faction, optimal weapon/CUB, memory build, memory resonance, weapon resonances, character leap
+- [x] Upload thumbnails and portraits to ImageKit under `/pgr/characters/`
+- [x] Upsert into MongoDB (`characters` collection)
+
+### Shared
+- [x] `shared/db_connection.ts` — shared MongoDB connect, used by both scraper and backend
+- [x] `shared/models/character_model.ts` — shared `ICharacter` interface
 
 ### Future Scrapers
-- [ ] Characters scraper
 - [ ] Weapons scraper
-- [ ] Builds (likely manual entry — not in structured form on the wiki)
+- [ ] Builds (likely manual entry)
 
 ---
 
 ## Backend — API Routes
 
-### Memories
-- [ ] `GET /api/memories` — list all memories (with optional `?stars=6` filter)
-- [ ] `GET /api/memories/:id` — single memory with full image URLs
-
 ### Characters
-- [ ] `GET /api/characters` — list all characters
-- [ ] `GET /api/characters/:id` — single character
+- [ ] `GET /api/characters` — list all characters (name, thumbnail, element, rank)
+- [ ] `GET /api/characters/:name` — full character detail
+
+### Memories
+- [ ] `GET /api/memories` — list all memories
+- [ ] `GET /api/memories/:name` — single memory detail
 
 ### Weapons
 - [ ] `GET /api/weapons` — list all weapons
-- [ ] `GET /api/weapons/:id` — single weapon
-
-### Builds
-- [ ] `GET /api/builds` — list all builds
-- [ ] `GET /api/builds?characterId=xxx` — builds for a specific character
-
----
-
-## Flutter App — Screens
-
-- [ ] Home screen
-- [ ] Memories list screen
-- [ ] Memory detail screen
-- [ ] Characters list screen
-- [ ] Character detail screen
-- [ ] Weapons list screen
-- [ ] Builds screen (per character)
-- [ ] Search screen
-
-### Already in pubspec.yaml
-- `dio` + `retrofit` — HTTP client (API calls)
-- `flutter_bloc` — state management
-- `cached_network_image` — image loading + caching
-- `json_serializable` — model generation
-- `google_fonts` — typography
-- `shared_preferences` — local storage
-
----
-
-## Data Flow
-
-```
-Wiki (grayravens.com)
-  └─► scraper downloads images + data
-        └─► images uploaded to ImageKit (CDN)
-              └─► data + ImageKit URLs saved to MongoDB Atlas
-                    └─► Express API serves JSON
-                          └─► Flutter app displays content
-```
+- [ ] `GET /api/weapons/:name` — single weapon detail
 
 ---
 
 ## What's Been Done
 
 1. [x] Monorepo structure created with npm workspaces
-2. [x] TypeScript configured in both backend and scraper
+2. [x] TypeScript configured in backend and scraper
 3. [x] MongoDB Atlas M0 cluster set up and connected
-4. [x] ImageKit account set up and integrated
-5. [x] Memories scraper built and run — 63 memories saved to MongoDB with images on ImageKit
+4. [x] ImageKit integrated
+5. [x] Memories scraper — 63 memories saved to MongoDB with images on ImageKit
+6. [x] Characters scraper — all playable characters saved to MongoDB with images on ImageKit
+7. [x] Shared DB connection extracted to `shared/db_connection.ts`
+8. [x] Shared character model interface in `shared/models/character_model.ts`
+9. [x] Express backend scaffolded — `index.ts` running, MongoDB connected, server on port 3000
+10. [x] Character route and controller files created (stubs — to be filled next session)
 
 ## Next Steps (in order)
 
-1. **Backend: Express server** — create `apps/backend/src/index.ts` with MongoDB connection
-2. **Backend: Memory model** — create `apps/backend/src/models/Memory.ts` (shared schema with scraper)
-3. **Backend: Memories routes** — `GET /api/memories` and `GET /api/memories/:id`
-4. **Test API** — run backend locally, hit routes with a tool like Postman or curl
-5. **Flutter: HTTP client setup** — configure dio/retrofit to call local backend
-6. **Flutter: Memories list screen** — display memories from API
-7. **Flutter: Memory detail screen** — show stats, set bonuses, images
-8. **Deploy backend** — Render free tier
-9. **Deploy Flutter web** — Firebase Hosting
-10. **Repeat scraper + API for Characters and Weapons**
+1. **Backend: Characters controller** — implement `getAllCharacters` and `getCharacterByName`
+2. **Backend: Characters route** — wire controller to `GET /api/characters` and `GET /api/characters/:name`
+3. **Test API** — hit routes with Postman or curl
+4. **Backend: Memories routes** — repeat for memories
+5. **Deploy backend** — Render free tier
+6. **Web frontend** — scaffold React app in `apps/frontend/web/`
+7. **Mobile frontend** — scaffold Flutter app in `apps/frontend/mobile/`

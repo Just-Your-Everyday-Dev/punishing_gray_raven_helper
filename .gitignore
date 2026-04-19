@@ -30,6 +30,7 @@ apps/frontend/android/app/debug
 apps/frontend/android/app/profile
 apps/frontend/android/app/release
 
+
 # ===========================
 # Node.js (apps/backend + scraper)
 # ===========================
@@ -48,3 +49,5 @@ scraper/.env
 apps/backend/.env
 
 dist/
+scraper/src/seeds/memories.txt
+scraper/src/seeds/characters.txt
